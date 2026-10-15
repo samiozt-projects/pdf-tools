@@ -239,6 +239,12 @@ class PdfToolApp:
             messagebox.showerror("Invalid output path", str(error))
             return
 
+        requested_output = output
+        output = self._next_available_output(output)
+        if output != requested_output:
+            self.output_var.set(str(output))
+            self.status_var.set(f"{requested_output.name} already exists; using {output.name}.")
+
         input_paths = {item.path.resolve() for item in self.files}
         if output in input_paths:
             messagebox.showerror("Invalid output path", "The output PDF must be different from the input files.")
@@ -248,6 +254,21 @@ class PdfToolApp:
         self.create_button.configure(state="disabled")
         self.status_var.set("Creating PDF...")
         threading.Thread(target=self._create_pdf_worker, args=(output,), daemon=True).start()
+
+    @staticmethod
+    def _next_available_output(output: Path) -> Path:
+        """Return output, or the next numbered filename when output already exists."""
+        if not output.exists():
+            return output
+
+        suffix = output.suffix or ".pdf"
+        stem = output.stem
+        counter = 1
+        while True:
+            candidate = output.with_name(f"{stem} ({counter}){suffix}")
+            if not candidate.exists():
+                return candidate
+            counter += 1
 
     def _create_pdf_worker(self, output: Path) -> None:
         temp_path: Path | None = None

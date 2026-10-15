@@ -10,6 +10,7 @@ A small Windows desktop tool for creating one PDF from a mix of PDF and image fi
 - Convert images to PDF pages automatically.
 - Preserve all pages from input PDFs.
 - Save the result wherever you choose.
+- Avoid overwriting an existing output by using names such as `merged (1).pdf`.
 
 Supported image types: JPG, JPEG, PNG, TIFF, BMP, GIF, and WEBP.
 
